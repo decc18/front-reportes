@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import type { UsuarioAuth } from '@/types/userAuthType';
-import { isLoading } from "@/utils/spinner";
-import logo from '@images/pages/ADMINLogo1.png';
-import { VForm } from 'vuetify/components/VForm';
+import { VForm } from 'vuetify/components/VForm'
+import type { UsuarioAuth } from '@/types/userAuthType'
+import logo from '@images/pages/ADMINLogo1.png'
+
 definePage({
   meta: {
     layout: 'blank',
   },
 })
+
 const errors = ref<Record<string, string | undefined>>({
   usuario: undefined,
   nemonico: undefined,
@@ -21,44 +22,32 @@ const refVForm = ref<VForm>()
 const credenciales = ref({
   usuario: 'satcom',
   nemonico: 'ADMIN',
-  password: 'satcom'
+  password: 'satcom',
 })
 
-
 const login = async () => {
-  try {
-    const res = await $api('api/Autenticacion/Login', {
-      method: 'POST',
-      body: {
-        usuario: credenciales.value.usuario,
-        nemonico: credenciales.value.nemonico,
-        password: credenciales.value.password,
-      },
-      onResponseError({ response }) {
-        console.log(response._data.errors);
-        errors.value = response._data.errors
-      },
-      
-    })
+  const res = await $api('api/Autenticacion/Login', {
+    method: 'POST',
+    body: {
+      usuario: credenciales.value.usuario,
+      nemonico: credenciales.value.nemonico,
+      password: credenciales.value.password,
+    },
+    onResponseError({ response }) {
+      console.log(response._data.errors)
+      errors.value = response._data.errors
+    },
+  })
 
-    const datosUsuario = computed((): UsuarioAuth => res)
-    
-    useCookie<UsuarioAuth>('userData').value = datosUsuario.value
-    useCookie('accessToken').value = datosUsuario.value.token
+  const datosUsuario = computed((): UsuarioAuth => res)
 
-    // Redirect to `to` query if exist or redirect to index route
-    // ❗ nextTick is required to wait for DOM updates and later redirect
-    await nextTick(() => {
-      router.replace(route.query.to ? String(route.query.to) : '/')
-    })
-    
-  }
-  catch (err) {
-    console.error(err)
-    isLoading.value = false;
-  }
+  useCookie<UsuarioAuth>('userData').value = datosUsuario.value
+  useCookie('accessToken').value = datosUsuario.value.token
+
+  await nextTick(() => {
+    router.replace(route.query.to ? String(route.query.to) : '/')
+  })
 }
-
 
 const onSubmit = () => {
   refVForm.value?.validate()
@@ -79,10 +68,8 @@ const isPasswordVisible = ref(false)
     >
       <VCardItem class="justify-center pb-1">
         <img
-                :src="logo"
-                  class="my-6 w-100"
-                
-              >
+        :src="logo"
+        class="my-6 w-100">
       </VCardItem>
 
       <VCardText>
@@ -93,7 +80,7 @@ const isPasswordVisible = ref(false)
           <VRow>
             <VCol cols="12">
               <VTextField
-                v-model="credenciales.usuario" 
+                v-model="credenciales.usuario"
                 autofocus
                 label="Usuario"
                 placeholder=""
@@ -102,7 +89,7 @@ const isPasswordVisible = ref(false)
             </VCol>
             <VCol cols="12">
               <VTextField
-                v-model="credenciales.nemonico" 
+                v-model="credenciales.nemonico"
                 label="Nemónico"
                 type="text"
                 placeholder="johndoe@email.com"
@@ -116,11 +103,11 @@ const isPasswordVisible = ref(false)
                 placeholder="············"
                 :type="isPasswordVisible ? 'text' : 'password'"
                 :append-inner-icon="isPasswordVisible ? 'ri-eye-off-line' : 'ri-eye-line'"
-                @click:append-inner="isPasswordVisible = !isPasswordVisible"
                 :rules="[requiredValidator]"
+                @click:append-inner="isPasswordVisible = !isPasswordVisible"
               />
               <VBtn
-              class="my-6"
+                class="my-6"
                 block
                 type="submit"
               >
@@ -131,7 +118,6 @@ const isPasswordVisible = ref(false)
         </VForm>
       </VCardText>
     </VCard>
-   
   </div>
 </template>
 

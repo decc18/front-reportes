@@ -1,13 +1,14 @@
-import messageHelper from "@/utils/messageHelper";
-import { isLoading } from "@/utils/spinner";
-import { ofetch } from 'ofetch';
+import { ofetch } from 'ofetch'
+import messageHelper from '@/utils/messageHelper'
+import { isLoading } from '@/utils/spinner'
 
 export const $api = ofetch.create({
-  timeout: 1000*60,
+  timeout: 1000 * 60,
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
-  async onRequest({ options,  }) {
+  async onRequest({ options }) {
     const accessToken = useCookie('accessToken').value
-    isLoading.value = true;
+
+    isLoading.value = true
     if (accessToken) {
       options.headers = {
         ...options.headers,
@@ -15,16 +16,16 @@ export const $api = ofetch.create({
       }
     }
   },
-  async onResponse({ request, response, options  }) {
-    isLoading.value = false;
-    if (!response.ok) {
-      messageHelper.throwCodeError(response.status, response.statusText);
-    } 
+  async onResponse({ response }) {
+    console.log(response)
+    isLoading.value = false
+    if (response.ok === false)
+      messageHelper.throwCodeError(response.status, response._data ?? response.statusText)
   },
-  async onRequestError({ request, options, error }) {
+  async onRequestError({ request, error }) {
     // Log error
-    console.log("[fetch request error]", request, error);
-    messageHelper.throwCodeError(500, "Error al realizar la invocación al Api");
-    isLoading.value = false;
-  }
+    console.log(request, error)
+    messageHelper.throwCodeError(500, 'Error al realizar la invocación al servicio API')
+    isLoading.value = false
+  },
 })

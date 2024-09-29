@@ -9,13 +9,13 @@ const logout = async () => {
   useCookie('accessToken').value = null
 
   // Remove "userData" from cookie
+  console.log(userData.value)
   userData.value = null
+  console.log(userData.value)
 
   // Redirect to login page
   await router.push('/login')
-  
 }
-
 </script>
 
 <template>
@@ -47,10 +47,9 @@ const logout = async () => {
               <VAvatar>
                 <VImg :src="avatar1" />
               </VAvatar>
-
               <div>
                 <div class="text-body-2 font-weight-medium text-high-emphasis">
-                  Satcom
+                 Satcom
                 </div>
                 <div class="text-capitalize text-caption text-disabled">
                   Root
