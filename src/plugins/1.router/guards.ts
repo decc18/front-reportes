@@ -1,4 +1,5 @@
-import type { RouteNamedMap, _RouterTyped } from 'unplugin-vue-router';
+import type { RouteNamedMap, _RouterTyped } from 'unplugin-vue-router'
+
 export const setupGuards = (router: _RouterTyped<RouteNamedMap & { [key: string]: any }>) => {
   // 👉 router.beforeEach
   // Docs: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
@@ -15,6 +16,7 @@ export const setupGuards = (router: _RouterTyped<RouteNamedMap & { [key: string]
      * Feel free to update this logic to suit your needs
      */
     const isLoggedIn = !!(useCookie('userData').value && useCookie('accessToken').value)
+
     /*
       If user is logged in and is trying to access login like page, redirect to home
       else allow visiting the page
@@ -26,13 +28,9 @@ export const setupGuards = (router: _RouterTyped<RouteNamedMap & { [key: string]
       else
         return undefined
     }
-      
+
     // Si no existe el userData, redirigir a login
-    if (!isLoggedIn) {
-        if (to.name !== 'login') {
-          return '/login'
-        }
-    }
-      
+    if (!isLoggedIn && to.name !== 'login' && to.name !== 'login-satcom')
+      return '/login'
   })
 }

@@ -18,8 +18,6 @@ const props = withDefaults(defineProps<Props>(), {
   tag: 'aside',
 })
 
-console.log("navItems:"+ JSON.stringify( props.navItems))
-
 const refNav = ref()
 
 const isHovered = useElementHover(refNav)

@@ -3,15 +3,22 @@ import avatar1 from '@images/avatars/avatar-1.png'
 
 const router = useRouter()
 const userData = useCookie<any>('userData')
+const login = ref<string | null>(null)
+const nemonico = ref<string | null>(null)
+const tipoUsuario = ref<string | null>(null)
+
+if (userData.value) {
+  login.value = userData.value.login
+  nemonico.value = userData.value.nemonico
+  tipoUsuario.value = userData.value.tipoUsuario
+}
 
 const logout = async () => {
   // Remove "accessToken" from cookie
   useCookie('accessToken').value = null
 
   // Remove "userData" from cookie
-  console.log(userData.value)
   userData.value = null
-  console.log(userData.value)
 
   // Redirect to login page
   await router.push('/login')
@@ -49,10 +56,13 @@ const logout = async () => {
               </VAvatar>
               <div>
                 <div class="text-body-2 font-weight-medium text-high-emphasis">
-                 Satcom
+                  Usuario: {{ login }}
                 </div>
                 <div class="text-capitalize text-caption text-disabled">
-                  Root
+                  Emisor: {{ nemonico }}
+                </div>
+                <div class="text-capitalize text-caption text-disabled">
+                  Tipo: {{ tipoUsuario }}
                 </div>
               </div>
             </div>

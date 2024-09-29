@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { cerrarSesion, isMessageDialogVisible, isOk, message } from "@/utils/message";
-import { isLoading } from "@/utils/spinner";
-import Loading from '@/views/pages/Loading.vue';
-import ScrollToTop from '@core/components/ScrollToTop.vue';
-import initCore from '@core/initCore';
-import { initConfigStore, useConfigStore } from '@core/stores/config';
-import { hexToRgb } from '@layouts/utils';
-import { useTheme } from 'vuetify';
+import { useTheme } from 'vuetify'
+import { cerrarSesion, isMessageDialogVisible, isOk, message } from '@/utils/message'
+import { isLoading } from '@/utils/spinner'
+import Loading from '@/views/pages/Loading.vue'
+import ScrollToTop from '@core/components/ScrollToTop.vue'
+import initCore from '@core/initCore'
+import { hexToRgb } from '@layouts/utils'
+import { initConfigStore, useConfigStore } from '@core/stores/config'
+
 const { global } = useTheme()
 
 // ℹ️ Sync current theme with initial loader theme
@@ -22,13 +23,13 @@ const configStore = useConfigStore()
     <VApp :style="`--v-global-theme-primary: ${hexToRgb(global.current.value.colors.primary)}`">
       <RouterView />
       <ScrollToTop />
-      <Loading :isVisible="isLoading"></Loading>
+      <Loading :is-visible="isLoading" />
       <MessageDialog
-        v-model:isDialogMessageVisible="isMessageDialogVisible" 
+        v-model:isDialogMessageVisible="isMessageDialogVisible"
         :msg="message"
-        :isOk="isOk"
-        :cerrarSesion="cerrarSesion"
-        />
+        :is-ok="isOk"
+        :cerrar-sesion="cerrarSesion"
+      />
     </VApp>
   </VLocaleProvider>
 </template>

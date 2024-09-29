@@ -1,6 +1,5 @@
-import type { UsuarioAuth } from '@/types/userAuthType';
-import type { RouteRecordRaw } from 'vue-router/auto';
-
+import type { RouteRecordRaw } from 'vue-router/auto'
+import type { UsuarioAuth } from '@/types/userAuthType'
 
 // 👉 Redirects
 export const redirects: RouteRecordRaw[] = [
@@ -12,15 +11,12 @@ export const redirects: RouteRecordRaw[] = [
     redirect: to => {
       // TODO: Get type from backend
       const userData = useCookie<UsuarioAuth>('userData')
-      console.log(userData.value)
-      if(userData.value === null)
-        return { name: 'login' } 
-      
+      if (userData.value === null)
+        return { name: 'login' }
+
       const userRole = userData?.value?.tipoUsuario
-      console.log(userRole)
       if (userRole === 'Root')
         return { name: 'apps-reportes' }
-      
 
       return { name: 'login', query: to.query }
     },
@@ -32,14 +28,10 @@ export const redirects: RouteRecordRaw[] = [
   },
 ]
 
-
 export const routes: RouteRecordRaw[] = [
-  
-
   {
     path: '/app/index.vue',
     name: 'apps-reportes',
     component: () => import('@/pages/apps/reportes/index.vue'),
   },
-  
 ]

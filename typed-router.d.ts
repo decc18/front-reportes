@@ -24,6 +24,7 @@ declare module 'vue-router/auto-routes' {
     'apps-reportes-generar-reporte': RouteRecordInfo<'apps-reportes-generar-reporte', '/apps/reportes/generarReporte', Record<never, never>, Record<never, never>>,
     'apps-reportes-programar-reporte': RouteRecordInfo<'apps-reportes-programar-reporte', '/apps/reportes/programarReporte', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
+    'login-satcom': RouteRecordInfo<'login-satcom', '/loginSatcom', Record<never, never>, Record<never, never>>,
     'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
   }
