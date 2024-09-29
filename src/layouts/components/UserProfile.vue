@@ -1,14 +1,7 @@
 <script setup lang="ts">
-import avatar1 from '@images/avatars/avatar-1.png';
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
+import avatar1 from '@images/avatars/avatar-1.png'
 
 const router = useRouter()
-const ability = useAbility()
-// const logout = async () => {
-//   useCookie('accessToken').value = null
-//   await router.push('/login')
-// }
-// TODO: Get type from backend
 const userData = useCookie<any>('userData')
 
 const logout = async () => {
@@ -20,13 +13,7 @@ const logout = async () => {
 
   // Redirect to login page
   await router.push('/login')
-
-  // ℹ️ We had to remove abilities in then block because if we don't nav menu items mutation is visible while redirecting user to login page
-  // Remove "userAbilities" from cookie
-  useCookie('userAbilityRules').value = null
-
-  // Reset ability to initial ability
-  ability.update([])
+  
 }
 
 </script>
