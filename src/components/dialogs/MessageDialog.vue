@@ -1,5 +1,8 @@
 <script setup lang="ts">
+const props = defineProps<Props>()
+const emit = defineEmits<Emit>()
 const router = useRouter()
+
 interface Props {
   isDialogMessageVisible: boolean
   msg: string
@@ -13,21 +16,16 @@ interface Emit {
 
 const updateModelValue = async (val: boolean) => {
   emit('update:isDialogMessageVisible', val)
-  //useCookie('accessToken').value = null
-  if(props.cerrarSesion){
+
+  if (props.cerrarSesion) {
     useCookie('accessToken').value = null
     await router.push('/login')
   }
 }
-const props = defineProps<Props>()
-
-const emit = defineEmits<Emit>()
-
-
 </script>
 
 <template>
-    <VDialog
+  <VDialog
     max-width="500"
     :model-value="props.isDialogMessageVisible"
   >
@@ -45,9 +43,9 @@ const emit = defineEmits<Emit>()
           </span>
         </VBtn>
         <VBtn
-         v-if="props.isOk === false"
+          v-if="props.isOk === false"
           icon
-          
+
           color="error"
           class="my-4"
           size="x-large"
@@ -55,34 +53,42 @@ const emit = defineEmits<Emit>()
           <span class="text-2xl font-weight-light">X</span>
         </VBtn>
 
-        <h1  v-if="props.isOk === true && props.cerrarSesion === false" class="text-h4 mb-4">
+        <h1
+          v-if="props.isOk === true && props.cerrarSesion === false"
+          class="text-h4 mb-4"
+        >
           Proceso realizado con éxito
         </h1>
-        <h1  v-if="props.isOk === false && props.cerrarSesion === false" class="text-h4 mb-4">
+        <h1
+          v-if="props.isOk === false && props.cerrarSesion === false"
+          class="text-h4 mb-4"
+        >
           Error al realizar la solicitud
         </h1>
-        <h1  v-if="props.isOk === false && props.cerrarSesion === true" class="text-h4 mb-4">
+        <h1
+          v-if="props.isOk === false && props.cerrarSesion === true"
+          class="text-h4 mb-4"
+        >
           Sesión Finalizada
         </h1>
         <p>{{ props.msg }}</p>
 
         <VBtn
-         v-if="props.isOk === false"
-           color="error"
-          
+          v-if="props.isOk === false"
+          color="error"
+
           @click="updateModelValue(false)"
         >
           Aceptar
         </VBtn>
         <VBtn
-         v-if="props.isOk === true"
-           color="primary"
+          v-if="props.isOk === true"
+          color="primary"
           @click="updateModelValue(false)"
         >
-        Aceptar
+          Aceptar
         </VBtn>
       </VCardText>
     </VCard>
   </VDialog>
-
 </template>

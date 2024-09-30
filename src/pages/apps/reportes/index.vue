@@ -31,6 +31,17 @@ const contactosTableHeaders = [
 const datosContacto = ref<typeContacto[]>([])
 const selectedItems = ref<typeContacto[]>([])
 const timelineItems = ref<typAccion[]>([])
+const progress = ref(0)
+
+progress.value = 0
+
+// Simulación del progreso del reporte (puedes reemplazarlo con una API)
+const interval = setInterval(() => {
+  if (progress.value < 100)
+    progress.value += 1
+  else
+    clearInterval(interval)
+}, 1000) // Cada segundo se incrementa el progreso
 
 // Update data table options
 const updateOptions = (options: any) => {
@@ -73,6 +84,7 @@ const totalregistros = computed(() => datosReporte.value.totalRegistros)
 
 const mostrarPopupContactos = async (id: number) => {
   idHistorialDetalle.value = id
+  selectedItems.value = ([])
 
   const datosCorreo = await $api(`api/Emisor/ObtenerContactosEmisor?idHistorial=${idHistorialDetalle.value}`, { method: 'GET' })
   const contactosTemp = computed((): typeContacto[] => datosCorreo)
@@ -175,6 +187,8 @@ const getChipColor = (estado: string) => {
   switch (estado) {
     case 'Generado':
       return 'success'
+    case 'Procesando':
+      return 'success'
     case 'Incompleto':
       return 'warning'
     case 'Error':
@@ -188,7 +202,22 @@ const getChipColor = (estado: string) => {
 <template>
   <section v-if="reportes">
     <VCard id="invoice-list">
-      <VCardItem title="Reportes Generados" />
+      <VCardItem title="Reportes Generados">
+        <template #append>
+          <IconBtn
+            class="me-1"
+            @click="fetchReportes"
+          >
+            <VTooltip
+              activator="parent"
+              location="top"
+            >
+              Actualizar Estado
+            </VTooltip>
+            <VIcon icon="ri-refresh-line" />
+          </IconBtn>
+        </template>
+      </VCardItem>
       <VDivider />
       <VCardText class="d-flex align-center flex-wrap gap-4">
         <VBtn
@@ -229,6 +258,7 @@ const getChipColor = (estado: string) => {
         :items-length="totalregistros"
         :headers="headers"
         :items="reportes"
+        hover
         item-value="idHistorial"
         class="text-no-wrap rounded-0"
         @update:options="updateOptions"
@@ -259,9 +289,19 @@ const getChipColor = (estado: string) => {
             <span class="text-body-2">Fecha: {{ formatoFechaHora(item.fechaCreacion) }} - Duración: {{ convertToSeconds(item.tiempoGeneracion) }}</span>
           </div>
         </template>
-
         <template #item.estado="{ item }">
+          <VProgressCircular
+            v-if="item.getEstadoGeneracion === 'Procesando'"
+            :rotate="360"
+            :size="40"
+            :width="3"
+            indeterminate
+            :color="getChipColor(item.getEstadoGeneracion)"
+          >
+            {{ progress }}
+          </VProgressCircular>
           <VChip
+            v-if="item.getEstadoGeneracion !== 'Procesando'"
             variant="outlined"
             label
             size="small"
@@ -421,8 +461,10 @@ const getChipColor = (estado: string) => {
           :items="datosContacto"
           show-select
           item-value="correoElectronico"
-          hide-default-footer
-        />
+          hover
+        >
+          <template #bottom />
+        </VDataTable>
         <VForm @submit.prevent="() => {}" />
       </VCardText>
       <VCardText class="d-flex justify-end flex-wrap gap-4">

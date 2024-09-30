@@ -6,6 +6,7 @@ import { isLoading } from '@/utils/spinner'
 
 type tipoReporte = 'Emision' | 'Recepcion' | 'Administrador' | 'Soporte' | null
 
+const router = useRouter()
 const searchQuery = ref('')
 const selectedStatus = ref<tipoReporte>(null)
 const campos = ref<typCampo[]>([])
@@ -141,9 +142,11 @@ const handleSubmit = async () => {
 
     const formValuesString = JSON.stringify(formValues.value)
 
-    const datoscatalogo = await $api(`api/Reporte/GenerarNuevoReporte?idReporte=${idReporteSeleccionado.value}&valores=${formValuesString}`, { method: 'POST' })
+    const datosReporteGen = await $api(`api/Reporte/GenerarNuevoReporte?idReporte=${idReporteSeleccionado.value}&valores=${formValuesString}`, { method: 'POST' })
 
-    console.log(datoscatalogo.value)
+    console.log(datosReporteGen.value)
+    messageHelper.mensaje('Reporte generado con éxito. Por favor verifique el estado del reporte')
+    await router.push('/apps/reportes')
   }
 }
 
@@ -151,8 +154,11 @@ const changeValueItem = async (id: string, catalogo: string) => {
   console.log(catalogo)
 
   campos.value.forEach(async campoLista => {
-    if (catalogo === 'Emisores' && campoLista.catalogo !== 'Emisores')
-      campoLista.itemsLista = []
+    if (catalogo === 'Emisores' && campoLista.tipoComponente === 'Select' && campoLista.catalogo !== '' && campoLista.catalogo !== 'Emisores') {
+      campoLista.itemsLista = ([])
+      formValues.value[campoLista.parametroSp] = null
+    }
+
     if (campoLista.catalogoPadre === catalogo) {
       const datoscatalogo = await $api(`api/Reporte/ConsultarCatalogo?catalogo=${campoLista.catalogo}&idcatalogoPadre=${id}&catalogoPadre=${catalogo}`, { method: 'GET' })
 
@@ -206,6 +212,7 @@ const changeValueItem = async (id: string, catalogo: string) => {
         :items-length="totalregistros"
         :headers="headers"
         :items="reportes"
+        hover
         item-value="idHistorial"
         class="text-no-wrap rounded-0"
         @update:options="updateOptions"

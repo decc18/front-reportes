@@ -1,12 +1,13 @@
 <script lang="ts" setup>
-import logo from '@images/pages/ADMINLogo1.png'
+import type { Component } from 'vue'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { layoutConfig } from '@layouts'
 import { VerticalNavGroup, VerticalNavLink, VerticalNavSectionTitle } from '@layouts/components'
 import { useLayoutConfigStore } from '@layouts/stores/config'
 import { injectionKeyIsVerticalNavHovered } from '@layouts/symbols'
 import type { NavGroup, NavLink, NavSectionTitle, VerticalNavItems } from '@layouts/types'
-import type { Component } from 'vue'
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import logo from '@images/pages/ADMINLogo1.png'
+
 interface Props {
   tag?: string | Component
   navItems: VerticalNavItems
@@ -71,7 +72,7 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
   >
  
     <!-- 👉 Header -->
-    <div class="nav-header">
+    <div class="nav-header" >
       <slot name="nav-header">
         <RouterLink
           to="/"
@@ -80,16 +81,15 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
           <img
                 :src="logo"
                 class="w-50"
-                
               >
-          <!-- <Transition name="vertical-nav-app-title">
+          <!--<Transition name="vertical-nav-app-title">
             <h1
               v-show="!hideTitleAndIcon"
               class="app-logo-title leading-normal"
             >
               {{ layoutConfig.app.title }}
             </h1>
-          </Transition> -->
+          </Transition>-->
         </RouterLink>
         <!-- 👉 Vertical nav actions -->
         <!-- Show toggle collapsible in >md and close button in <md -->
@@ -118,7 +118,7 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
       </slot>
     </div>
     <slot name="before-nav-items">
-      <div class="vertical-nav-items-shadow" />
+      <div class="vertical-nav-items-shadow " />
     </slot>
     <slot
       name="nav-items"
@@ -127,7 +127,7 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
       <PerfectScrollbar
         :key="configStore.isAppRTL"
         tag="ul"
-        class="nav-items"
+        class="nav-items mt-4"
         :options="{ wheelPropagation: false }"
         @ps-scroll-y="handleNavScroll"
       >
@@ -140,7 +140,6 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
       </PerfectScrollbar>
     </slot>
     <slot name="after-nav-items" />
-  
   </Component>
 </template>
 
