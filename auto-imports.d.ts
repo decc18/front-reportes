@@ -6,6 +6,8 @@
 export {}
 declare global {
   const $api: typeof import('./src/utils/api')['$api']
+  const $apiBack: typeof import('./src/utils/api')['$apiBack']
+  const $apiBackGound: typeof import('./src/utils/api')['$apiBackGound']
   const COOKIE_MAX_AGE_1_YEAR: typeof import('./src/utils/constants')['COOKIE_MAX_AGE_1_YEAR']
   const EffectScope: typeof import('vue')['EffectScope']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
@@ -377,6 +379,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly $api: UnwrapRef<typeof import('./src/utils/api')['$api']>
+    readonly $apiBackGound: UnwrapRef<typeof import('./src/utils/api')['$apiBackGound']>
     readonly COOKIE_MAX_AGE_1_YEAR: UnwrapRef<typeof import('./src/utils/constants')['COOKIE_MAX_AGE_1_YEAR']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>

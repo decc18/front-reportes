@@ -1,11 +1,12 @@
 <!-- eslint-disable indent -->
 <script setup lang="ts">
+import { onUnmounted } from 'vue'
 import messageHelper from '@/utils/messageHelper'
 import { isLoading } from '@/utils/spinner'
 import type { typeContacto } from '@/types/emisorTypes'
 import type { typAccion, typHisotrial } from '@/types/reporteType'
 
-type estadosReporte = 'Generado' | 'Incompleto' | 'Error' | null
+type estadosReporte = 'Generado' | 'Incompleto' | 'Error' | 'Procesando' | null
 
 const searchQuery = ref('')
 const selectedStatus = ref<estadosReporte>(null)
@@ -17,7 +18,8 @@ const page = ref(1)
 const sortBy = ref()
 const orderBy = ref()
 const isDialogVisible = ref(false)
-
+const isSnackbarVisible = ref(false)
+const mensajeSnackbar = ref('')
 const isDialogHisVisible = ref(false)
 const idHistorialEliminar = ref(0)
 const idHistorialDetalle = ref(0)
@@ -35,14 +37,6 @@ const progress = ref(0)
 
 progress.value = 0
 
-// Simulación del progreso del reporte (puedes reemplazarlo con una API)
-const interval = setInterval(() => {
-  if (progress.value < 100)
-    progress.value += 1
-  else
-    clearInterval(interval)
-}, 1000) // Cada segundo se incrementa el progreso
-
 // Update data table options
 const updateOptions = (options: any) => {
   page.value = options.page
@@ -52,7 +46,7 @@ const updateOptions = (options: any) => {
 
 // 👉 headers
 const headers = [
-  // { title: 'Id', key: 'idHistorial' },
+  { title: 'Id', key: 'idHistorial' },
   { title: 'Nombre reporte', key: 'nombre' },
   { title: 'Codigo negocio', key: 'codigo' },
   { title: 'Estado', key: 'estado' },
@@ -197,26 +191,46 @@ const getChipColor = (estado: string) => {
       return 'info'
   }
 }
+
+const timerId = setInterval(async () => {
+  try {
+    const datosReporteHis = await $apiBackGound('api/Reporte/ConsultarEstadoReporte', { method: 'GET' })
+    if (datosReporteHis === true) {
+      isSnackbarVisible.value = true
+      mensajeSnackbar.value = '¡Reporte actualizado!'
+      fetchReportes()
+    }
+  }
+  catch (errorInt) {
+    console.error('Error en la consulta del estado del reporte:', errorInt)
+  }
+}, 10000)
+
+onUnmounted(() => {
+  clearInterval(timerId)
+})
 </script>
 
 <template>
   <section v-if="reportes">
     <VCard id="invoice-list">
       <VCardItem title="Reportes Generados">
-        <template #append>
+        <!--
+          <template #append>
           <IconBtn
-            class="me-1"
-            @click="fetchReportes"
+          class="me-1"
+          @click="fetchReportes"
           >
-            <VTooltip
-              activator="parent"
-              location="top"
-            >
-              Actualizar Estado
-            </VTooltip>
-            <VIcon icon="ri-refresh-line" />
+          <VTooltip
+          activator="parent"
+          location="top"
+          >
+          Actualizar Estado
+          </VTooltip>
+          <VIcon icon="ri-refresh-line" />
           </IconBtn>
-        </template>
+          </template>
+        -->
       </VCardItem>
       <VDivider />
       <VCardText class="d-flex align-center flex-wrap gap-4">
@@ -231,20 +245,20 @@ const getChipColor = (estado: string) => {
 
         <div class="d-flex align-center flex-wrap gap-4">
           <!-- 👉 Search  -->
-          <div style="inline-size: 250px;">
+          <div style="inline-size: 300px;">
             <VTextField
               v-model="searchQuery"
               placeholder="Buscar reporte"
             />
           </div>
 
-          <div style="inline-size: 175px;">
+          <div style="inline-size: 200px;">
             <VSelect
               v-model="selectedStatus"
               placeholder="Estado"
               clearable
               clear-icon="ri-close-line"
-              :items="['Generado', 'Incompleto', 'Error']"
+              :items="['Generado', 'Procesando', 'Incompleto', 'Error']"
             />
           </div>
         </div>
@@ -264,13 +278,15 @@ const getChipColor = (estado: string) => {
         @update:options="updateOptions"
       >
         <!-- idHistorial -->
-        <!--
-          <template #item.idHistorial="{ item }">
-          <RouterLink :to="{ name: 'apps-reportes-generar-reporte', params: { id: item.idHistorial } }">
+
+        <template #item.idHistorial="{ item }">
+          <!--
+            <RouterLink :to="{ name: 'apps-reportes-generar-reporte', params: { id: item.idHistorial } }">
+            {{ item.idHistorial }}
+            </RouterLink>
+          -->
           {{ item.idHistorial }}
-          </RouterLink>
-          </template>
-        -->
+        </template>
 
         <template #item.codigo="{ item }">
           <div class="d-flex flex-column">
@@ -293,12 +309,17 @@ const getChipColor = (estado: string) => {
           <VProgressCircular
             v-if="item.getEstadoGeneracion === 'Procesando'"
             :rotate="360"
-            :size="40"
+            :size="30"
             :width="3"
             indeterminate
             :color="getChipColor(item.getEstadoGeneracion)"
           >
-            {{ progress }}
+            <VTooltip
+              activator="parent"
+              location="top"
+            >
+              Procesando
+            </VTooltip>
           </VProgressCircular>
           <VChip
             v-if="item.getEstadoGeneracion !== 'Procesando'"
@@ -526,6 +547,13 @@ const getChipColor = (estado: string) => {
       </VCardText>
     </VCard>
   </VDialog>
+  <VSnackbar
+    v-model="isSnackbarVisible"
+    location="top end"
+    :timeout="4000"
+  >
+    {{ mensajeSnackbar }}
+  </VSnackbar>
 </template>
 
   <style lang="scss">

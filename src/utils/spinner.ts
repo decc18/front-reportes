@@ -1,4 +1,3 @@
-const isLoading = ref<boolean>(false) 
+const isLoading = ref<boolean>(false)
 
 export { isLoading }
-

@@ -93,4 +93,8 @@ export type typCampo = {
     codigoEstablecimiento: number; // Ajusta el tipo si es solo string o number
     getEstableciminto: string;
   }
-  
+
+  export type typRespReporte = {
+    estado: boolean;
+    mensaje: string;
+  }

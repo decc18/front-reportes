@@ -49,7 +49,6 @@ export const themes: Record<string, ThemeDefinition> = {
 
     variables: {
       'code-color': '#d400ff',
-      'overlay-scrim-background': '#262B43',
       'tooltip-background': '#282A42',
       'overlay-scrim-opacity': 0.5,
       'hover-opacity': 0.06,

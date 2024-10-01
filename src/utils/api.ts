@@ -17,15 +17,26 @@ export const $api = ofetch.create({
     }
   },
   async onResponse({ response }) {
-    console.log(response)
     isLoading.value = false
     if (response.ok === false)
       messageHelper.throwCodeError(response.status, response._data ?? response.statusText)
   },
-  async onRequestError({ request, error }) {
-    // Log error
-    console.log(request, error)
+  async onRequestError() {
     messageHelper.throwCodeError(500, 'Error al realizar la invocación al servicio API')
     isLoading.value = false
+  },
+})
+
+export const $apiBackGound = ofetch.create({
+  timeout: 1000 * 60,
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  async onRequest({ options }) {
+    const accessToken = useCookie('accessToken').value
+    if (accessToken) {
+      options.headers = {
+        ...options.headers,
+        Authorization: `Bearer ${accessToken}`,
+      }
+    }
   },
 })

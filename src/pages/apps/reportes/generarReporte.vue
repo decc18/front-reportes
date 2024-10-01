@@ -1,7 +1,7 @@
 <!-- eslint-disable indent -->
 <script setup lang="ts">
 import { VForm } from 'vuetify/components/VForm'
-import type { typCampo, typHisotrial, typSelect } from '@/types/reporteType'
+import type { typCampo, typHisotrial, typRespReporte, typSelect } from '@/types/reporteType'
 import { isLoading } from '@/utils/spinner'
 
 type tipoReporte = 'Emision' | 'Recepcion' | 'Administrador' | 'Soporte' | null
@@ -143,9 +143,13 @@ const handleSubmit = async () => {
     const formValuesString = JSON.stringify(formValues.value)
 
     const datosReporteGen = await $api(`api/Reporte/GenerarNuevoReporte?idReporte=${idReporteSeleccionado.value}&valores=${formValuesString}`, { method: 'POST' })
+    const respReporte = computed((): typRespReporte => datosReporteGen)
 
-    console.log(datosReporteGen.value)
-    messageHelper.mensaje('Reporte generado con éxito. Por favor verifique el estado del reporte')
+    if (respReporte.value.estado === true)
+      messageHelper.mensaje(respReporte.value.mensaje)
+    else
+      messageHelper.throwCodeError(500, respReporte.value.mensaje)
+
     await router.push('/apps/reportes')
   }
 }
@@ -177,7 +181,7 @@ const changeValueItem = async (id: string, catalogo: string) => {
       <VDivider />
       <VCardText class="d-flex align-center flex-wrap gap-4">
         <VBtn
-          prepend-icon="ri-add-line"
+          prepend-icon="ri-24-hours-fill"
           :to="{ name: 'apps-reportes-programar-reporte' }"
         >
           Programar Reporte
@@ -187,13 +191,13 @@ const changeValueItem = async (id: string, catalogo: string) => {
         <VSpacer />
         <div class="d-flex align-center flex-wrap gap-4">
           <!-- 👉 Search  -->
-          <div style="inline-size: 250px;">
+          <div style="inline-size: 300px;">
             <VTextField
               v-model="searchQuery"
               placeholder="Buscar reporte"
             />
           </div>
-          <div style="inline-size: 175px;">
+          <div style="inline-size: 200px;">
             <VSelect
               v-model="selectedStatus"
               placeholder="Tipo Reporte"
@@ -281,7 +285,7 @@ const changeValueItem = async (id: string, catalogo: string) => {
               >
                 Programar Reporte
               </VTooltip>
-              <VIcon icon="ri-menu-add-line" />
+              <VIcon icon="ri-24-hours-fill" />
             </IconBtn>
           </div>
         </template>
